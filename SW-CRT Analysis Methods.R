@@ -1,4 +1,14 @@
 ######################################################
+### Code to Analyze SW-CRTs Using Methods from     ###
+### in Kennedy-Shaffer et al. 2019                 ###
+### Update: 9/15/2019                              ###
+### Contact: lee_kennedyshaffer@g.harvard.edu      ###
+### See Latest Update at:                          ###
+### https://github.com/leekshaffer/SW-CRT-analysis ###
+######################################################
+
+
+######################################################
 ###  check/install/load needed packages            ###
 ######################################################
 
@@ -612,10 +622,16 @@ Perm.Effects <- function(Periods, Outcomes, Clusters, StartTimes, Indivs=NULL,
                                                                   CtrlType=CtrlTypes)[CO.Vars]))
     outlistint <- NULL
     namesprior <- NULL
-    for (i in 1:length(CO.Vars)) {
-      namei <- paste0("PermEsts.",substr(CO.Vars[i],5,11))
-      outlistint <- append(outlistint, list(PermEsts.CO[i,]))
+    if (length(CO.Vars)==1) {
+      namei <- paste0("PermEsts.",substr(CO.Vars,5,11))
+      outlistint <- append(outlistint, list(PermEsts.CO))
       namesprior <- c(namesprior,namei)
+    } else {
+      for (i in 1:length(CO.Vars)) {
+        namei <- paste0("PermEsts.",substr(CO.Vars[i],5,11))
+        outlistint <- append(outlistint, list(PermEsts.CO[i,]))
+        namesprior <- c(namesprior,namei)
+      }
     }
     names(outlistint) <- namesprior
     outlist <- append(outlist, outlistint)
@@ -641,6 +657,8 @@ Perm.Effects <- function(Periods, Outcomes, Clusters, StartTimes, Indivs=NULL,
   }
   
   if ("ENS" %in% Type) {
+    estmatrix <- matrix(unlist(outlist), nrow=length(outlist), ncol=NumPerms, 
+                        byrow=TRUE, dimnames <- list(names(outlist)))
     outlistint <- apply(X=estmatrix, MARGIN=2,
                         FUN=function(x) Ens1.Effect.Est(x, Prefix="PermEsts.")$Est.ENS)
     outlist <- append(outlist, list(PermEsts.ENS=outlistint))
