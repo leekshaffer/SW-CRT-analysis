@@ -7,4 +7,4 @@ Figures.R creates the figures in the article Kennedy-Shaffer et al. 2019 based o
 
 These programs are a work in progress, as we work to improve usability, error-catching, and speed of analysis. If you find errors, please contact Lee Kennedy-Shaffer at lee_kennedyshaffer (at) g (dot) harvard (dot) edu.
 
-If you use these programs, please cite Kennedy-Shaffer et al. 2019.
+If you use these programs, please cite Kennedy-Shaffer et al. 2019. It is currently available on arXiv at https://arxiv.org/abs/1909.07233.
