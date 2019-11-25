@@ -21,13 +21,14 @@ MakeRandomData <- function(mu, thetas, prob1, NumClusts, tau, nu, NumInds, RD) {
   clustFX <- rnorm(n=NumClusts, mean=mu, sd=tau)
   for (i in 1:NumClusts) {
     Cluster <- rep(i, NumPds)
+    Type <- rep(types[i], NumPds)
     Period <- time
     Trt <- ifelse(Period >= switches[i], 1, 0)
     ControlProbs <- clustFX[i] + thetas[(types[i]),] + rnorm(n=NumPds, mean=0, sd=nu)
     TrueProbs <- ControlProbs + Trt*RD
     TrueProbsCut <- pmin(pmax(TrueProbs,0),1)
     Outcome <- rbinom(n=NumPds, size=NumInds, prob=TrueProbsCut)/NumInds
-    DF <- rbind(DF, data.frame(Cluster, Period, Trt, Outcome))
+    DF <- rbind(DF, data.frame(Cluster, Type, Period, Trt, Outcome))
   }
   return(DF)
 }
@@ -85,13 +86,14 @@ MakeRandomData <- function(mu, thetas, prob1, NumClusts, tau, nu, NumInds, logOR
   clustFX <- rnorm(n=NumClusts, mean=mu, sd=tau)
   for (i in 1:NumClusts) {
     Cluster <- rep(i, NumPds)
+    Type <- rep(types[i], NumPds)
     Period <- time
     Trt <- ifelse(Period >= switches[i], 1, 0)
     ControlProbs <- clustFX[i] + thetas[(types[i]),] + rnorm(n=NumPds, mean=0, sd=nu)
     TrueProbs <- ControlProbs + Trt*logOR
     TrueProbsVal <- expit(TrueProbs)
     Outcome <- rbinom(n=NumPds, size=NumInds, prob=TrueProbsVal)/NumInds
-    DF <- rbind(DF, data.frame(Cluster, Period, Trt, Outcome))
+    DF <- rbind(DF, data.frame(Cluster, Type, Period, Trt, Outcome))
   }
   return(DF)
 }
@@ -141,18 +143,18 @@ for (i in 17:20) {
   nameRD <- paste0("SimData_Sim1_",i)
   nameOR <- paste0("SimData_Sim2_",i)
   DF_RD <- data.frame(get(nameRD)[,,2])
-  DF_OR <- data.frame(get(nameOR)[,,5])
-  Data_Fig2 <- reshape(DF_RD[,c("Cluster","Period","Outcome")],
-                   v.names="Outcome", idvar="Cluster", timevar="Period",
+  DF_OR <- data.frame(get(nameOR)[,,2])
+  Data_Fig2 <- reshape(DF_RD[,c("Cluster","Period","Outcome","Type")],
+                   v.names="Outcome", idvar=c("Cluster","Type"), timevar="Period",
                    direction="wide")
-  names(Data_Fig2) <- c("Cluster","1","2","3","4","5","6","7","8")
+  names(Data_Fig2) <- c("Cluster","Type","1","2","3","4","5","6","7","8")
   assign(x=paste0("Data_Fig2",subgraphs[(i-16)]), value=Data_Fig2)
   save(list=c(paste0("Data_Fig2",subgraphs[(i-16)])),
        file=paste0("Fig_Data/Data_Fig2",subgraphs[(i-16)],".Rda"))
-  Data_Fig7 <- reshape(DF_OR[,c("Cluster","Period","Outcome")],
-                       v.names="Outcome", idvar="Cluster", timevar="Period",
+  Data_Fig7 <- reshape(DF_OR[,c("Cluster","Period","Outcome","Type")],
+                       v.names="Outcome", idvar=c("Cluster","Type"), timevar="Period",
                        direction="wide")
-  names(Data_Fig7) <- c("Cluster","1","2","3","4","5","6","7","8")
+  names(Data_Fig7) <- c("Cluster","Type","1","2","3","4","5","6","7","8")
   assign(x=paste0("Data_Fig7",subgraphs[(i-16)]), value=Data_Fig7)
   save(list=c(paste0("Data_Fig7",subgraphs[(i-16)])),
        file=paste0("Fig_Data/Data_Fig7",subgraphs[(i-16)],".Rda"))
@@ -302,7 +304,7 @@ Data_Fig6 <- Data_Full_Sim1[Data_Full_Sim1$Scen %in% c(9:12,17:20),
 
 ## Figure 12 Data ##
 load(paste0("Sim1_Res/SimRes_Sim1_20.Rda"))
-Data_Fig12 <- cov(x=SimRes_Sim1_20[,Est.Var.Names[1:10]],use="pairwise.complete.obs")
+Data_Fig12 <- cor(x=SimRes_Sim1_20[,Est.Var.Names[1:10]],use="pairwise.complete.obs")
 
 rm(SimRes_Sim1_20)
 rm(Varying)
@@ -400,7 +402,7 @@ Data_Fig11 <- Data_Full_Sim2[Data_Full_Sim2$Scen %in% c(9:12,17:20),
 
 ## Figure 13 Data ##
 load(paste0("Sim2_Res/SimRes_Sim2_20.Rda"))
-Data_Fig13 <- cov(x=SimRes_Sim2_20[,Est.Var.Names[1:10]],use="pairwise.complete.obs")
+Data_Fig13 <- cor(x=SimRes_Sim2_20[,Est.Var.Names[1:10]],use="pairwise.complete.obs")
 
 rm(SimRes_Sim2_20)
 rm(Varying)

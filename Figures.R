@@ -1,7 +1,7 @@
 ######################################################
 ### Code to Replicate Figures of Sim Data          ###
 ### in Kennedy-Shaffer et al. 2019                 ###
-### Update: 9/15/2019                              ###
+### Update: 11/12/2019                             ###
 ### Contact: lee_kennedyshaffer@g.harvard.edu      ###
 ### See Latest Update at:                          ###
 ### https://github.com/leekshaffer/SW-CRT-analysis ###
@@ -146,6 +146,7 @@ scentext =rep(c("(a) Scenario 1. Common Time Effects, No Cluster-Period Effect",
                 "(d) Scenario 4. Varying Time Effects, Cluster-Period Effect"),
               6)
 subgraphs <- c("a","b","c","d")
+cols <- c("black","darkgrey")
 setEPS()
 postscript(file=paste0(figfolder,"/Fig2_RD_GenData.eps"), width=9, height=9, paper="special")
 par(mfrow=c(2,2))
@@ -160,10 +161,10 @@ for (i in 1:4) {
   title(xlab="Period", line=2)
   title(ylab=expression(Y[ij]), line=2)
   for (j in 1:(dim(df)[1])) {
-    lines(x=as.numeric(names(df)[-1]), y=df[j,-1],
-          type="l", col=j+1, lwd=2)
-    points(x=as.numeric(names(df)[-1]), y=df[j,-1],
-           pch=19, col=j+1, cex=1.5)
+    lines(x=as.numeric(names(df)[-(1:2)]), y=df[j,-(1:2)],
+          type="l", col=cols[df[j,"Type"]], lwd=2)
+    points(x=as.numeric(names(df)[-(1:2)]), y=df[j,-(1:2)],
+           pch=19, col=cols[df[j,"Type"]], cex=1.5)
   }
 }
 dev.off()
@@ -435,6 +436,7 @@ scentext =rep(c("(a) Scenario 1. Common Time Effects, No Cluster-Period Effect",
                 "(c) Scenario 3. Varying Time Effects, No Cluster-Period Effect",
                 "(d) Scenario 4. Varying Time Effects, Cluster-Period Effect"),
               6)
+cols <- c("black","darkgrey")
 setEPS()
 postscript(file=paste0(figfolder,"/Fig7_OR_GenData.eps"), width=9, height=9, paper="special")
 par(mfrow=c(2,2))
@@ -450,10 +452,10 @@ for (i in 1:4) {
   title(xlab="Period", line=2)
   title(ylab=expression(Y[ij]), line=2)
   for (j in 1:(dim(df)[1])) {
-    lines(x=as.numeric(names(df)[-1]), y=df[j,-1],
-          type="l", col=j+1, lwd=2)
-    points(x=as.numeric(names(df)[-1]), y=df[j,-1],
-           pch=19, col=j+1, cex=1.5)
+    lines(x=as.numeric(names(df)[-(1:2)]), y=df[j,-(1:2)],
+          type="l", col=cols[df[j,"Type"]], lwd=2)
+    points(x=as.numeric(names(df)[-(1:2)]), y=df[j,-(1:2)],
+           pch=19, col=cols[df[j,"Type"]], cex=1.5)
   }
 }
 dev.off()
@@ -740,8 +742,8 @@ postscript(file=paste0(figfolder,"/Fig12_RD_Covariance.eps"), width=9, height=9,
 levelplot(x=Data_Fig12[1:10,10:1],
           pretty=TRUE, 
           xlab="Method", ylab="Method",
-          at=seq(0,.00425,by=.00025),
-          colorkey=list(at=seq(0,.00425,by=.00025)),
+          at=seq(0,1,by=.05),
+          colorkey=list(at=seq(0,1,by=.05)),
           col.regions=heat.colors(100)[length(heat.colors(100)):1])
 dev.off()
 
@@ -750,7 +752,57 @@ postscript(file=paste0(figfolder,"/Fig13_OR_Covariance.eps"), width=9, height=9,
 levelplot(x=Data_Fig13[1:10,10:1],
           pretty=TRUE, 
           xlab="Method", ylab="Method", 
-          at=seq(0,.0425,by=.0025),
-          colorkey=list(at=seq(0,.0425,by=.0025)),
+          at=seq(0,1,by=.05),
+          colorkey=list(at=seq(0,1,by=.05)),
           col.regions=heat.colors(100)[length(heat.colors(100)):1])
 dev.off()
+
+
+
+###### Generating Tables for Appendix D ########
+Null_tbl <- cbind(Data_Fig3b, Data_Fig5b, Data_Fig4)
+Mod_tbl <- cbind(Data_Fig3a, Data_Fig5a, Data_Fig6[1:52,])
+Null_tbl <- Null_tbl[,c(2:4,9,13)]
+Mod_tbl <- Mod_tbl[,c(2:4,9,12)]
+
+colnames(Null_tbl) <- c("Method", "Mean", "Std. Dev.",
+                        "Coverage", "TIE")
+colnames(Mod_tbl) <- c("Method", "Mean", "Std. Dev.",
+                        "Coverage", "Power")
+Null_tbl <- Null_tbl[c(1:2,12:13,3:6,8,7,9,11,14:15,25:26,16:19,21,20,22,24,27:28,38:39,29:32,34,33,35,37,40:41,51:52,42:45,47,46,48,50),]
+Mod_tbl <- Mod_tbl[c(1:2,12:13,3:6,8,7,9,11,14:15,25:26,16:19,21,20,22,24,27:28,38:39,29:32,34,33,35,37,40:41,51:52,42:45,47,46,48,50),]
+
+Null_tbl$Method <- rep(c("MEM","CPI","MEM-a","CPI-a","NPWP","SC-1","SC-2","CO-1","CO-2","CO-3","COSC","ENS"),4)
+Mod_tbl$Method <- rep(c("MEM","CPI","MEM-a","CPI-a","NPWP","SC-1","SC-2","CO-1","CO-2","CO-3","COSC","ENS"),4)
+
+rownames(Null_tbl) <- NULL
+rownames(Mod_tbl) <- NULL
+
+Full_tbl <- cbind(Null_tbl, Mod_tbl[,2:5])
+
+print(xtable(Full_tbl, digits=3), include.rownames=FALSE)
+
+
+Null_tbl2 <- cbind(Data_Fig8b, Data_Fig10b, Data_Fig9)
+Mod_tbl2 <- cbind(Data_Fig8a, Data_Fig10a, Data_Fig11[1:52,])
+Null_tbl2 <- Null_tbl2[,c(2:4,9,13)]
+Mod_tbl2 <- Mod_tbl2[,c(2:4,9,12)]
+
+colnames(Null_tbl2) <- c("Method", "Mean", "Std. Dev.",
+                        "Coverage", "TIE")
+colnames(Mod_tbl2) <- c("Method", "Mean", "Std. Dev.",
+                       "Coverage", "Power")
+Null_tbl2 <- Null_tbl2[c(1:2,12:13,3:6,8,7,9,11,14:15,25:26,16:19,21,20,22,24,27:28,38:39,29:32,34,33,35,37,40:41,51:52,42:45,47,46,48,50),]
+Mod_tbl2 <- Mod_tbl2[c(1:2,12:13,3:6,8,7,9,11,14:15,25:26,16:19,21,20,22,24,27:28,38:39,29:32,34,33,35,37,40:41,51:52,42:45,47,46,48,50),]
+
+Null_tbl2$Method <- rep(c("MEM","CPI","MEM-a","CPI-a","NPWP","SC-1","SC-2","CO-1","CO-2","CO-3","COSC","ENS"),4)
+Mod_tbl2$Method <- rep(c("MEM","CPI","MEM-a","CPI-a","NPWP","SC-1","SC-2","CO-1","CO-2","CO-3","COSC","ENS"),4)
+
+rownames(Null_tbl2) <- NULL
+rownames(Mod_tbl2) <- NULL
+
+Full_tbl2 <- cbind(Null_tbl2, Mod_tbl2[,2:5])
+
+print(xtable(Full_tbl2, digits=3), include.rownames=FALSE)
+
+
