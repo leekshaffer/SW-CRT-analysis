@@ -7,9 +7,9 @@ Simulations.R generates and analyzes the simulated data in Kennedy-Shaffer et al
 
 Figures.R creates the figures in the article Kennedy-Shaffer et al. 2020 based on the results from Simulations.R.
 
-These programs are a work in progress, as we work to improve usability, error-catching, and speed of analysis. If you find errors, please contact Lee Kennedy-Shaffer at lee_kennedyshaffer (at) g (dot) harvard (dot) edu.
+These programs are a work in progress, as we work to improve usability, error-catching, and speed of analysis. If you find errors, please contact Lee Kennedy-Shaffer at lee_kennedyshaffer (at) g (dot) harvard (dot) edu. Versions that may be more useful for outbreak settings are available at https://github.com/leekshaffer/SW-CRT-outbreak.
 
 If you use these programs, please cite Kennedy-Shaffer et al. 2020: http://doi.org/10.1002/sim.8451.
 
 
-Last Update: November 25, 2019
+Last Update: May 26, 2020
